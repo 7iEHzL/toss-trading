@@ -1,0 +1,26 @@
+# Secrets
+.env
+.env.*
+secrets/
+token.json
+account_info.json
+
+# Virtual environments
+venv/
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# VS Code / IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
