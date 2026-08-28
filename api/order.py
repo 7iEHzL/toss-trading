@@ -1,6 +1,22 @@
 import requests
 
+from config.settings import ENABLE_REAL_ORDER
+
 BASE_URL = "https://openapi.tossinvest.com"
+
+
+class LiveOrderSafetyError(RuntimeError):
+    pass
+
+
+def _require_live_order_permission(live_order_confirmed):
+    if ENABLE_REAL_ORDER is not True:
+        raise LiveOrderSafetyError("Live trading이 비활성화되어 있습니다.")
+
+    if live_order_confirmed is not True:
+        raise LiveOrderSafetyError(
+            "해당 주문에 대한 명시적 사용자 확인이 필요합니다."
+        )
 
 
 def buy_stock(
@@ -8,17 +24,21 @@ def buy_stock(
     account_seq,
     symbol,
     quantity,
-    price=None
+    price=None,
+    *,
+    live_order_confirmed=False
 ):
     """
     주식 매수 함수
 
     시장가 매수:
-        buy_stock(token, 1, "005930", 1)
+        buy_stock(token, 1, "005930", 1, live_order_confirmed=True)
 
     지정가 매수:
-        buy_stock(token, 1, "005930", 1, 82000)
+        buy_stock(token, 1, "005930", 1, 82000, live_order_confirmed=True)
     """
+
+    _require_live_order_permission(live_order_confirmed)
 
     url = f"{BASE_URL}/api/v1/orders"
 
@@ -73,17 +93,21 @@ def sell_stock(
     account_seq,
     symbol,
     quantity,
-    price=None
+    price=None,
+    *,
+    live_order_confirmed=False
 ):
     """
     주식 매도 함수
 
     시장가 매도:
-        sell_stock(token, 1, "005930", 1)
+        sell_stock(token, 1, "005930", 1, live_order_confirmed=True)
 
     지정가 매도:
-        sell_stock(token, 1, "005930", 1, 82000)
+        sell_stock(token, 1, "005930", 1, 82000, live_order_confirmed=True)
     """
+
+    _require_live_order_permission(live_order_confirmed)
 
     url = f"{BASE_URL}/api/v1/orders"
 
