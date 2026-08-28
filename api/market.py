@@ -28,4 +28,4 @@ def get_current_price(access_token, symbol):
 
     data = response.json()
 
-    return int(data["result"][0]["lastPrice"])
+    return float(data["result"][0]["lastPrice"])
