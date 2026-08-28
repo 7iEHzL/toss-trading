@@ -27,6 +27,10 @@ toss_trading/
 │   └── order.py                    # 매수, 매도, 주문 상태 및 체결 판정
 ├── backtest/
 │   ├── engine.py                   # 단일 종목 signal backtest
+│   ├── costs.py                    # commission/slippage 체결 비용 모델
+│   ├── portfolio.py                # 공통 cash/position/P&L 원장
+│   ├── accounting.py               # 목표비중 리밸런싱 및 결과 조립
+│   ├── performance.py              # benchmark 및 표준 성과지표
 │   ├── multi_strategy.py           # 네 가지 단일 종목 전략 비교
 │   ├── rotation_engine.py          # 횡단면 모멘텀 로테이션
 │   ├── multifactor_engine.py       # Multifactor v1
@@ -132,6 +136,7 @@ v4.1은 v4의 ATR stop을 포함하지 않으므로 v4에 기능을 순차 추�
 candle DataFrame
 → strategy가 buy_signal/sell_signal 생성
 → run_signal_backtest
+→ 종가 기준 signal을 다음 거래일 시가에 체결
 → cash 및 단일 position 갱신
 → trades와 equity_curve 생성
 → total return, MDD, win rate 계산
@@ -150,6 +155,14 @@ candle DataFrame
 ```
 
 현재 MDD는 running peak 대비 하락률의 최솟값으로 계산합니다. Multifactor win rate는 여러 번 나누어 매수한 포지션의 평균 원가와 실현손익을 정확히 반영하지 않으므로 개선이 필요합니다.
+
+모든 backtest engine은 공통 `ExecutionCostModel`과 `Portfolio`를 사용합니다. commission과 slippage의 기본값은 기존 동작과의 호환을 위해 0입니다. 목표비중 리밸런싱은 비중 초과 포지션도 매도하며, 평균 원가에는 매수 commission이 포함됩니다. 매도 거래의 `realized_pnl`은 평균 원가, 매도 commission 및 slippage가 반영된 값입니다.
+
+각 결과에는 `cash`, `positions`, `realized_pnl`, `unrealized_pnl`, `total_commission`, `total_slippage_cost`와 `performance`가 포함됩니다. `performance`는 total return, CAGR, annual volatility, MDD, Sharpe, Sortino, Calmar, turnover를 제공하며, 엔진의 `benchmark` 인수에 날짜 인덱스를 가진 가격 Series를 전달하면 benchmark return과 excess return도 계산합니다.
+
+Multifactor 엔진은 현재 날짜 없는 정적 ROE/PBR을 사용하므로 결과의 `research_report`와 `performance`에 `BIASED_RESEARCH_MODE`를 표시합니다. `fundamentals_point_in_time`은 `false`이며, 이 경고가 있는 결과는 point-in-time 펀더멘털을 사용한 검증으로 해석할 수 없습니다.
+
+향후 장기 데이터는 `data/snapshot.py`의 `DataSource`/`DataSnapshot` 인터페이스를 통해 연결할 수 있습니다. snapshot ID, 기준시각, 출처, universe와 metadata provenance를 기록하는 최소 계약만 제공하며 실제 장기·survivorship-free 데이터셋은 포함하지 않습니다.
 
 ## 설치 및 개발 환경
 
@@ -186,6 +199,7 @@ repository root에 `.env`를 둘 수 있습니다. 실제 값이나 production c
 ```dotenv
 CLIENT_ID=your_client_id_here
 CLIENT_SECRET=your_client_secret_here
+ENABLE_REAL_ORDER=false
 ```
 
 `.env`, `.env.*`, token 및 account 정보 파일은 `.gitignore` 대상입니다. access token과 계좌번호도 출력하거나 저장소에 저장하지 마십시오.
@@ -202,7 +216,7 @@ CLIENT_SECRET=your_client_secret_here
 
 ## 주요 entry point
 
-> **경고:** 현재 entry point에는 `if __name__ == "__main__":` 보호가 없으며 import 시에도 최상위 코드가 실행될 수 있습니다.
+모든 현재 entry point는 `if __name__ == "__main__":` guard를 사용하므로 import만으로 OAuth, API 조회, 백테스트, plotting 또는 주문을 실행하지 않습니다.
 
 - `main.py`: 단일 종목의 MA, RSI, volatility breakout, momentum 비교
 - `main_rotation.py`: cross-sectional momentum rotation
@@ -219,25 +233,25 @@ CLIENT_SECRET=your_client_secret_here
 
 **현재 시스템은 live trading ready가 아니며 paper trading ready도 아닙니다.**
 
-- `main_to_real_purchase`의 live-order flag가 현재 코드에서 활성화된 상태입니다.
-- 사용자 확인 입력은 있지만 시장가 주문 endpoint에 직접 연결됩니다.
+- live trading은 `ENABLE_REAL_ORDER` 환경변수의 기본값이 `false`인 fail-closed 설정입니다.
+- 실제 주문은 live 설정과 실행 시 사용자 확인이 모두 충족되어야 하며, `api/order.py`도 명시적 confirmation이 없으면 주문 POST를 차단합니다.
 - paper broker, idempotency, 중복 주문 방지, 잔고 사전 검증, 부분체결, 취소·정정, 재시도, reconciliation이 없습니다.
 - 주문 결과와 계좌 응답 전체 출력은 민감정보 노출 위험이 있습니다.
-- import-time side effect 때문에 파일을 import하는 것만으로 API 호출이 발생할 수 있습니다.
+- 시장가 주문의 사전 notional 한도는 아직 구현되지 않았습니다.
 
 사용자가 특정 실주문을 명시적으로 요청하지 않는 한 `buy_stock()`, `sell_stock()`, 주문 endpoint 또는 `main_to_real_purchase`를 실행하지 마십시오.
 
 ## Known Issues
 
-- 종가로 만든 신호를 동일 종가에 체결하여 look-ahead bias가 있습니다.
-- 거래 수수료, 세금, bid/ask spread, slippage 및 환전비용이 없습니다.
+- 모든 현재 backtest engine은 종가 signal을 다음 거래일 시가에 체결합니다. Multifactor v4의 ATR stop도 종가에서 stop signal을 확정하고 다음 거래일 시가에 매도합니다.
+- commission과 단순 고정 bps slippage는 지원하지만 세금, bid/ask spread의 별도 모델, 환전비용은 아직 없습니다.
 - 미국주식 가격과 원화로 표시된 초기 현금 사이에 환율 처리가 없습니다.
 - ROE/PBR은 날짜 없는 상수이므로 point-in-time 가용성을 보장하지 않습니다.
 - 현재 universe는 사후 선택된 종목일 수 있어 survivorship bias 가능성이 있습니다.
 - API 최신 candle 200개만 사용하며 warm-up 후 평가 표본이 약 74~80거래일로 매우 짧습니다.
-- benchmark, CAGR, annual volatility, Sharpe, Sortino, Calmar가 없습니다.
-- 목표비중 리밸런싱과 multifactor 거래별 원가/승률 계산이 부정확합니다.
-- 데이터 snapshot과 실험 metadata가 없어 과거 결과를 재현하기 어렵습니다.
+- benchmark는 호출자가 가격 Series를 제공해야 하며 기본 benchmark dataset은 아직 없습니다.
+- 짧은 표본에서 연율화 지표는 통계적으로 의미가 약하며, risk-free rate의 외부 입력은 아직 지원하지 않습니다.
+- snapshot/data-source 인터페이스는 있으나 실제 장기 데이터 저장소와 실험 결과 영속화는 아직 없습니다.
 - API timeout, retry, exception handling 및 schema validation이 부족합니다.
 - 자동화 테스트와 CI가 없습니다.
 - `requirments.txt`는 `requirements.txt`의 오타이며 `matplotlib`도 누락되어 있습니다. 이번 작업에서는 변경하지 않았습니다.
@@ -259,12 +273,24 @@ CLIENT_SECRET=your_client_secret_here
 
 ### P1 — Reliable Backtesting
 
-- commission, tax, FX cost, spread 및 slippage 모델
-- 정확한 목표비중 조정과 평균 원가/실현손익 accounting
-- point-in-time fundamental 및 survivorship-aware universe
-- 장기 adjusted-price dataset과 재현 가능한 snapshot
-- benchmark, CAGR, volatility, Sharpe, Sortino, Calmar, turnover
-- 거래 달력 기반 weekly/monthly rebalance
+**Research-ready baseline 완료.** 현재 범위는 institutional-grade historical data platform을 포함하지 않습니다.
+
+- commission/slippage 공통 execution model
+- 공통 목표비중 조정과 평균 원가/실현·미실현손익 accounting
+- next-open execution과 signal/execution timestamp 분리
+- benchmark 입력 및 CAGR, volatility, Sharpe, Sortino, Calmar, turnover
+- 정적 ROE/PBR 사용 시 `BIASED_RESEARCH_MODE` 강제 표시
+- 장기 데이터 연결을 위한 최소 `DataSource`/`DataSnapshot` 인터페이스
+
+세금·FX·spread 세분화, 실제 point-in-time fundamental, survivorship-free universe와 장기 adjusted dataset은 baseline의 알려진 한계이며 이번 P1 종료 범위에는 포함하지 않습니다.
+
+### R1 — Baseline Strategy / Factor Research
+
+- 공통 데이터 구간과 benchmark를 먼저 고정하고 baseline 전략 선정
+- factor 가설, 계산 시점, 기대 방향과 평가 기준을 사전 정의
+- in-sample 성과 최대화 대신 out-of-sample/walk-forward 비교
+- turnover와 거래비용 적용 전후 성과를 함께 평가
+- parameter sensitivity와 factor 간 상관·중복 노출 점검
 
 ### P2 — Research Infrastructure
 
