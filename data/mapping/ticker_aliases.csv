@@ -1,0 +1,4 @@
+membership_ticker,price_ticker,effective_start,effective_end,status,mapping_type,evidence
+BRK.B,BRK-B,2014-07-01,2022-12-31,mapped,symbol_formatting,Yahoo punctuation convention
+BF.B,BF-B,2014-07-01,2022-12-31,mapped,symbol_formatting,Yahoo punctuation convention
+FB,META,2022-06-09,2022-06-28,mapped,ticker_rename,Meta Platforms ticker rename

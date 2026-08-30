@@ -30,10 +30,151 @@
 - Hypothesis: 기존 Rotation baseline은 2015–2022 development 영역에서 비용 적용 후에도 benchmark 대비 해석 가능한 성과를 보인다.
 - Baseline: AMD/TSLA/AMZN/AAPL Cross-sectional Momentum Rotation
 - Change: alpha/parameter 변경 없음
-- Experiment setup: 코드로 고정 완료. Adjusted local snapshot 대기 중.
-- Results: `PENDING_DATA`; final OOS 미조회.
+- Experiment setup: Yahoo/yfinance 1.2.0 adjusted OHLC, 2015-01-02~2022-12-30, primary universe AMD/TSLA/AMZN/AAPL, SPY 및 동일가중 benchmark, 0/5/10/20bps.
+- Results: 10bps에서 누적수익률 3,558.20%, CAGR 61.75%, Sharpe 1.079, MDD -71.01%, turnover 142.06x. SPY 112.17%, 동일가중 808.97%. 2021–2022 수익률 -63.8%, Sharpe -0.75. 실현손익이 TSLA에 크게 집중. SPXL robustness는 수익을 높였지만 leverage effect와 분리 불가.
 - Conclusion: `INCONCLUSIVE`
-- Next research question: 로컬 adjusted snapshot 확보 후 development 및 walk-forward 평가.
+- Next research question: 기존 baseline을 결함이 명확한 진단 기준으로 유지할지, 항상 risk-on 구조를 분리하기 위한 단순 risk-control control을 추가할지 결정.
+
+## R1-001A — Second Opinion Decision
+
+- ID: `R1-001A`
+- Hypothesis: 결함이 확인된 R1-001도 소급 변경하지 않은 고정 research baseline으로 가치가 있다.
+- Baseline: R1-001 Cross-sectional Momentum Rotation 유지
+- Change: baseline 변경 없음. SPY와 동일가중 buy-and-hold benchmark 유지.
+- Experiment setup: 다음 실험은 기존 126일 absolute momentum을 사용한 단일 cash risk-off filter. TSLA 제외는 diagnostic으로만 사용.
+- Results: 연구 방향 결정 완료. Final OOS 미조회.
+- Conclusion: `ACCEPT`
+- Next research question: 126일 absolute momentum risk-off가 development downside와 risk-adjusted metric을 개선하는가?
+
+## R1-002 — 126-day Absolute Momentum Risk-off
+
+- ID: `R1-002`
+- Hypothesis: 선택된 winner의 126일 momentum이 0 이하일 때 현금을 보유하면 baseline의 MDD와 약세 구간 손실이 개선된다.
+- Baseline: R1-001 primary baseline
+- Change: winner 126-day absolute momentum `<= 0`일 때 cash
+- Experiment setup: R1-001과 동일. TSLA 제외 diagnostic 추가. Final OOS 봉인.
+- Results: 10bps에서 return 3,910.64%, MDD -64.18%, Sharpe 1.111, Sortino 1.560, Calmar 0.993, turnover 134.56x. Baseline 대비 MDD +6.83%p, Sharpe +0.032, Calmar +0.123, 2021–2022 return -63.8%→-56.5%. Sortino는 -0.020. TSLA 제외 비교에서도 MDD -57.93%→-50.31%, Sharpe 0.809→0.852, Calmar 0.586→0.722.
+- Conclusion: `ACCEPT` — development 가설 승인. Final candidate 채택은 아님.
+- Next research question: 남은 핵심 문제인 종목 집중을 직접 다룰지, R1-002를 고정 candidate로 두고 다른 독립 factor 연구로 이동할지 결정.
+
+## R1-003 — Top 2 Equal-weight Diversification
+
+- ID: `R1-003`
+- Hypothesis: R1-002의 Top 1을 Top 2 equal-weight로만 바꾸면 single-name concentration과 MDD를 낮추면서 momentum premium의 상당 부분을 보존할 수 있다.
+- Baseline: R1-002 126-day absolute-momentum risk-off.
+- Change: Top 1 → Top 2, 각 slot 50%. 각 후보의 126-day momentum이 0 이하이면 해당 slot은 cash.
+- Experiment setup: 2015–2022 development snapshot, AMD/TSLA/AMZN/AAPL, SPY 및 universe equal-weight benchmark, next-open execution, slippage 0/5/10/20bps. 다른 parameter는 변경하거나 탐색하지 않는다. Final OOS는 봉인한다.
+- Success criteria: MDD뿐 아니라 Sharpe/Calmar, realized-P&L concentration, CAGR 및 excess-return 보존을 함께 판단한다.
+- Results: 10bps에서 R1-002 대비 MDD -64.18%→-47.57%, volatility 60.42%→39.95%, Sharpe 1.111→1.125로 개선되었다. 반면 CAGR 63.75%→44.74%, Sortino 1.560→1.490, Calmar 0.993→0.941로 하락했다. 최대 단일 종목 절대 realized-P&L share는 TSLA 기준 71.49%→80.03%로 상승했다. 2021–2022 손실은 -56.48%→-27.74%로 완화되었고, 10bps excess return은 SPY 대비 1,380.21%p, equal-weight 대비 683.41%p로 양수를 유지했다. 결과 방향은 0/5/10/20bps에서 일관되었다.
+- Conclusion: `REJECT` — downside는 개선했지만 Calmar와 Sortino 및 명시적 P&L concentration 기준을 함께 충족하지 못했고 CAGR 희생도 컸다.
+- Next research question: Top 3나 weight 조합을 재튜닝하지 않는다. R1-002를 development candidate로 유지하고 다음 독립 factor research question을 사전 등록한다.
+
+## R1-004 — Remove Short-horizon Momentum Component
+
+- ID: `R1-004`
+- Hypothesis: R1-002 score에서 21-day 항만 제거하면 단기 가격 민감도와 집중을 낮추면서 63/126-day momentum premium을 보존할 수 있다.
+- Baseline: R1-002 126-day absolute-momentum risk-off.
+- Change: relative momentum weights 1/1/1 → 0/1/1.
+- Experiment setup: 기존 R1 protocol과 동일. Top 1, 126-day risk-off, 5일 rebalance와 next-open execution 유지. 다른 parameter search 없음. Final OOS 봉인.
+- Success criteria: Sharpe/Calmar 비열화, turnover 또는 realized-P&L concentration 개선, CAGR 및 benchmark excess return 보존, 비용·시간 구간상 심한 충돌 없음.
+- Results: 10bps 전체 development에서 R1-002 대비 CAGR 63.75%→79.47%, Sharpe 1.111→1.267, Sortino 1.560→1.786, Calmar 0.993→1.198, turnover 134.56x→116.82x로 개선되었다. 반면 MDD는 -64.18%→-66.36%, 최대 single-name absolute realized-P&L share는 TSLA 기준 71.49%→73.77%로 악화됐다. 2015–2020의 세 2년 구간에서는 대체로 개선됐지만 2021–2022 return -56.48%→-59.13%, Sharpe -0.672→-0.762로 악화됐다. 비용별 전체기간 개선 방향은 0/5/10/20bps에서 유지됐다.
+- Conclusion: `INCONCLUSIVE` — 전체기간 risk-adjusted 성과와 turnover 개선은 강하지만 최근 development downside 및 concentration 악화와 충돌한다.
+- Next research question: 인접 weight/lookback을 재탐색하지 않는다. R1-002를 candidate로 유지하고, 이 충돌을 이용해 protocol을 사후 변경하거나 Final OOS를 열지 않는다.
+
+## R1-005–R1-007 — Bounded Batch (Pre-registered)
+
+- Decision: Option A 승인. 세 독립 가설을 결과 전에 고정하고 모두 평가한 뒤 batch 종료.
+- Baseline: 각 실험별 R1-002.
+- Common setup: 기존 R1 protocol, 10bps primary와 0/5/10/20bps robustness, 2년 구간 및 concentration diagnostic, Final OOS 봉인.
+- Common criteria: Sharpe/Sortino/Calmar 중 2개 이상 개선, 0.05 초과 악화 없음, MDD 악화 3%p 이내, CAGR 80% 이상 보존, benchmark excess 양수, turnover 증가 20% 이내.
+- R1-005 change: 기존 score를 trailing 63-day volatility로 조정.
+- R1-006 change: 126-day positive breadth가 2/4 미만이면 cash.
+- R1-007 change: SPY 126-day momentum이 0 이하이면 cash.
+- Stop rule: ACCEPT 여부와 무관하게 세 실험 후 종료하며 인접 parameter를 탐색하지 않음.
+- Results: R1-005는 10bps CAGR 48.74%, Sharpe 0.987, Sortino 1.355, Calmar 0.776, MDD -62.81%, concentration 63.96%. R1-006은 CAGR 59.87%, Sharpe 1.086, Sortino 1.455, Calmar 0.932, MDD -64.24%, concentration 86.13%. R1-007은 CAGR 52.05%, Sharpe 1.038, Sortino 1.318, Calmar 0.910, MDD -57.20%, concentration 66.78%. 세 실험 모두 비용별 방향은 일관됐고 2021–2022 downside 일부를 개선했지만 공통 risk-adjusted 필수 기준을 통과하지 못했다.
+- Conclusions: R1-005 `REJECT`; R1-006 `REJECT`; R1-007 `REJECT`.
+- Stop rule: batch 완료. 추가 volatility window, breadth threshold, regime lookback을 탐색하지 않는다. R1-002 candidate와 Final OOS seal을 유지한다.
+
+## R2-001 — Leave-one-out Universe Dependency Audit
+
+- ID: `R2-001`
+- Hypothesis: R1-002가 특정 단일 종목에 과도하게 의존하지 않는다면 각 종목 제외 후에도 risk-adjusted 성과와 benchmark excess 방향이 유지된다.
+- Baseline: Frozen R1-002.
+- Change: 전략 변경 없음. AMD, TSLA, AMZN, AAPL을 각각 한 번 제외하는 audit-only diagnostic.
+- Experiment setup: 2015–2022 development, 0/5/10/20bps, Final OOS 봉인. 결과를 universe selection에 사용하지 않음.
+- Classification rule: 단일 제외로 CAGR 30% 이상 감소, Sharpe 0.20 이상 감소 또는 benchmark excess 음수 전환 시 `CONCENTRATED`.
+- Results: TSLA 제외 시 CAGR 63.75%→36.32%(-43.03%), Sharpe 1.111→0.852(-0.259), equal-weight excess 3,101.67%p→17.15%p. AMD 제외 CAGR 48.49%, AMZN 제외 54.02%, AAPL 제외 67.47%. 모든 제외 결과의 SPY 및 equal-weight excess는 양수 유지.
+- Conclusion: `CONCENTRATED` — TSLA exclusion이 사전 trigger 두 개를 충족.
+- Stop rule: 추가 subset 제거 또는 universe 재선정 없음.
+
+## R2-002 — P&L Source Attribution
+
+- ID: `R2-002`
+- Research question: R1-002 TSLA dependency가 가격 노출, 보유 기간, 소수 대형 거래 또는 특정 기간 중 어디서 발생하는가?
+- Baseline: Frozen R1-002 10bps.
+- Change: 전략 변경 없음. Exact daily P&L attribution만 추가.
+- Experiment setup: overnight/intraday price contribution과 execution cost를 종목별 분해하고 equity delta와 reconcile. Holding days, sell realized P&L과 2년 구간 기여도 진단. Final OOS 봉인.
+- Interpretation thresholds: single trade absolute realized-P&L 30%, single period positive contribution 60%, exposure/payoff 비교.
+- Results: TSLA holding-day share 34.49%, absolute net contribution share 71.49%, gross path share 68.24%. TSLA overnight +$7.34M, intraday -$2.59M, cost -$0.11M, net +$4.64M. 2019–2020 +$8.34M, 2021–2022 -$3.68M. 최대 단일 realized trade +$3.64M은 absolute realized-P&L의 21.09%. Reconciliation 최대 $1.6e-9.
+- Conclusion: `PAYOFF_DRIVEN + PERIOD_CONCENTRATED`; `TRADE_OUTLIER_DRIVEN` 아님. AMD가 더 오래 보유됐으므로 단순 exposure duration 설명도 기각.
+- Stop rule: attribution 결과를 이용한 universe, execution timing 또는 parameter 변경 없음.
+
+## R2-003 — Overnight Gap Concentration
+
+- ID: `R2-003`
+- Research question: TSLA 2019–2020 overnight payoff가 소수 extreme gap 또는 다수 분산된 gap 중 어디서 발생했는가?
+- Baseline: Frozen R1-002 10bps attribution.
+- Change: 전략 변경 없음. Positive overnight contribution의 top 1/5/10 share와 HHI 진단.
+- Classification: top 1 ≥20% 또는 top 5 ≥50%면 `EXTREME_GAP_DRIVEN`; top 5 <30% 및 positive days ≥30이면 `DISTRIBUTED`; 나머지는 `MIXED`.
+- Results: 302 overnight observation 중 positive 188, negative 114. Positive total +$14.13M, negative -$9.12M, net +$5.01M. Top 1/5/10 positive share 4.65%/14.07%/23.39%, HHI 0.0122. 최대 양의 날은 2020-11-17 +$657,684, 최대 음의 날은 2020-09-08 -$786,998.
+- Conclusion: `DISTRIBUTED`. 2019–2020 기간에는 집중됐지만 기간 내부 payoff는 소수 extreme gap이 아닌 다수 overnight day에 분산.
+- Stop rule: threshold/period 변경, overnight hedge 또는 execution 변경 없음.
+
+## R2-004 — Exposure-normalized Return Attribution
+
+- ID: `R2-004`
+- Research question: TSLA dollar contribution이 단위 노출당 return edge, capital scaling 또는 둘 다에서 발생하는가?
+- Baseline: Frozen R1-002 10bps.
+- Change: 전략 변경 없음. 보유일 return과 notional을 분리 측정.
+- Classification: mean overnight +0.10%p/day 및 hit rate +5%p이면 `RETURN_EDGE`; average notional 1.5x이면 `CAPITAL_SCALING`; 둘 다면 `BOTH`.
+- Results: TSLA 2019–2020 mean/median overnight return 0.564%/0.629%, hit rate 62.05%, average/median notional $3.21M/$2.24M. Pooled others는 0.285%/0.256%, hit rate 57.06%, notional $0.81M/$0.73M. Mean 차이 +0.279%p, hit-rate 차이 +4.987%p, average notional ratio 3.94x.
+- Conclusion: `CAPITAL_SCALING`. Return mean 조건은 통과했으나 hit-rate가 5%p threshold를 0.013%p 하회하여 `RETURN_EDGE`는 부여하지 않음.
+- Stop rule: R2 development attribution 종료. Threshold 완화나 sizing/execution 변경 없음.
+
+## R3-000 — S&P 500 PIT Data Feasibility (Pre-registered)
+
+- ID: `R3-000`
+- Research question: survivorship-aware/point-in-time S&P 500 universe를 R3 replication에 사용할 만큼 신뢰성 있고 재현 가능하게 확보할 수 있는가?
+- Frozen strategy: R1-002 21/63/126, weights 1/1/1, Top 1, 126-day absolute gate, 5-day rebalance, next-open, 10bps.
+- Change: 전략 실행 없음. 데이터 공급 범위·품질·접근성 audit만 수행.
+- Mandatory gate: PIT membership, delisted securities, permanent identity, corporate actions, delisting treatment, daily open/close, 2014-07~2022 coverage, PIT integrity, immutable snapshot, legal/actual access.
+- Go/no-go: 모든 gate와 실제 sample access가 확인돼야 `GO`; 제품은 존재하지만 접근 검증이 없으면 `CONDITIONAL`; 구조적 결손이면 `NO-GO`.
+- Final OOS: 봉인.
+- Results: 무료 pitindex + Yahoo audit에서 membership 192 snapshots/701 unique tickers/count 498–507을 확인했다. Calibration 후 제한 retry를 포함한 가격 audit 결과는 427/701(60.91%), constituent-date coverage 686,695/1,079,994(63.58%), unresolved 274개였다. Manifest는 검증됐고 Final OOS 행은 0개였다.
+- Conclusion: `BLOCKED — DATA QUALITY INSUFFICIENT`. 사전 price 98%, mapping 99%, unresolved 1% 기준을 크게 미달하므로 R3-001을 실행하지 않는다. Threshold 완화, 누락 종목 silent drop, 추가 대규모 retry는 하지 않는다. Final OOS는 봉인한다.
+
+## R3-000C — Final Free-data Clean Retry
+
+- ID: `R3-000C`
+- Research question: 기존 60.91% coverage가 implementation/interruption artifact인지 reproducible free-data limitation인지 마지막 1회 독립 확인.
+- Setup: 새 `r3_free_sp500_clean_retry_v1`, Python 3.12 ingestion 격리, seed 20260831 previous-missing 30개와 known controls, batch 10, 총 최대 3회, 2/4초 backoff. Final OOS 봉인.
+- Calibration results: previous-missing sample 0/30 recovered. 전체 37 requests 중 SUCCESS 3(MSFT/BRK-B/META), invalid payload 9, price not returned 25. Mandatory current control AAPL은 3회 후 invalid payload. Manifest verified, Final OOS flag false.
+- Full audit: `NOT RUN`; calibration 선행 gate 실패.
+- Conclusion: `BLOCKED`. 기존 저조한 coverage에는 초기 validator bug와 batch/checkpoint artifact가 일부 있었지만 clean sample에서 historical Yahoo availability limitation이 재현됐고 downloader도 mandatory control에서 결정적이지 않았다.
+- Stop rule: `R3 CLOSED — BLOCKED BY FREE-DATA QUALITY`. 추가 Yahoo retry/source mixing/manual mapping 없음. R3-001은 current free-data protocol에서 permanently not authorized. R4 plan만 설계하고 performance는 실행하지 않음.
+
+## R4-000 — Fixed-ETF Eligibility and Data-quality Audit (Pre-registered)
+
+- ID: `R4-000`
+- Research question: can one liquid, pre-2010, broad ETF per pre-registered economic category be selected from data available by 2014-06-30 without inspecting strategy performance?
+- Baseline: frozen R1-002 strategy; it is not executed in R4-000.
+- Change: universe construction only. Nine categories and a closed issuer-verified candidate roster are fixed before price inspection.
+- Experiment setup: adjusted daily OHLCV for 2013-01-01 through 2014-06-30; 2013 median raw-close dollar volume; USD 5M threshold; maximum-liquidity representative; inception/ticker tie-breaks; common-SPY-calendar coverage audit; Final OOS sealed.
+- Success criteria: every category has at least one eligible candidate, selected deterministically, with valid OHLCV, at least 95% date coverage in both audit subperiods, no post-2022 rows, and a reproducible manifest.
+- Prohibited: signals, strategy returns, benchmark returns, parameter changes, post-result category/candidate/threshold edits, and R4-001 execution.
+- Results: 30/31 candidates returned valid data and had 100% common-SPY-calendar coverage in 2013 and 2014 H1. TLO returned no Yahoo payload and was retained as an explicit failure. Every category had at least one passing candidate. Selected universe: SPY/EFA/EEM/IEF/TLT/LQD/IYR/GLD/DBC. Manifest mismatches 0; post-2022 rows 0; performance outputs 0.
+- Conclusion: `ACCEPT` for universe/data-audit feasibility only. This is not a strategy-performance acceptance.
+- Next research question: should this immutable universe be authorized for R4-001 replication under the already frozen strategy/evaluation protocol?
 
 ## Experiment Template
 

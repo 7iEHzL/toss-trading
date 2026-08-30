@@ -173,6 +173,7 @@ Python 3.x가 필요합니다. 현재 지원 버전이 엄밀히 고정되어 �
 - 현재 로컬 개발 환경은 Python 3.9.6입니다.
 - 다른 Python 3 버전과의 호환성은 아직 체계적으로 검증하지 않았습니다.
 - 이는 Python 3.9.6만 지원한다는 의미가 아니며, 지원 버전 범위는 향후 테스트를 통해 확정해야 합니다.
+- R3의 `pitindex` 기반 데이터 ingestion은 Python 3.11+ 별도 환경에서 수행하고, 생성된 immutable snapshot만 기본 연구 환경에서 읽습니다. Broker/live-trading runtime을 데이터 수집 환경으로 업그레이드하지 않습니다.
 
 Windows PowerShell 예시:
 

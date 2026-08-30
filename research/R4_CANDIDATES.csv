@@ -1,0 +1,32 @@
+category,ticker,inception_date,exposure,issuer_source
+us_broad_equity,SPY,1993-01-22,S&P 500 Index,https://www.ssga.com/us/en/intermediary/etfs/state-street-spdr-sp-500-etf-trust-spy
+us_broad_equity,IVV,2000-05-15,S&P 500 Index,https://www.ishares.com/us/products/239726/ishares-core-sp-500-etf
+us_broad_equity,VTI,2001-05-24,U.S. total stock market,https://investor.vanguard.com/investment-products/etfs/profile/vti
+us_broad_equity,ITOT,2004-01-20,U.S. total stock market,https://www.ishares.com/us/products/239724/ishares-core-sp-total-us-stock-market-etf
+us_broad_equity,SCHB,2009-11-03,U.S. broad stock market,https://www.schwabassetmanagement.com/products/schb
+us_broad_equity,IWV,2000-05-22,Russell 3000 Index,https://www.ishares.com/us/products/239714/ishares-russell-3000-etf
+us_broad_equity,IYY,2000-06-12,Dow Jones U.S. Index,https://www.ishares.com/us/products/239513/ishares-dow-jones-us-etf
+developed_ex_us,EFA,2001-08-14,MSCI EAFE Index,https://www.ishares.com/us/products/239623/ishares-msci-eafe-etf
+developed_ex_us,VEA,2007-07-20,Developed markets ex-U.S.,https://investor.vanguard.com/investment-products/etfs/profile/vea
+developed_ex_us,SCHF,2009-11-03,Developed markets ex-U.S.,https://www.schwabassetmanagement.com/products/schf
+developed_ex_us,SPDW,2007-04-20,Developed world ex-U.S.,https://www.ssga.com/us/en/intermediary/etfs/spdr-portfolio-developed-world-ex-us-etf-spdw
+emerging_markets,EEM,2003-04-07,MSCI Emerging Markets Index,https://www.ishares.com/us/products/239637/ishares-msci-emerging-markets-etf
+emerging_markets,VWO,2005-03-04,FTSE Emerging Markets Index,https://investor.vanguard.com/investment-products/etfs/profile/vwo
+us_intermediate_treasury,IEF,2002-07-22,7-10 year U.S. Treasury,https://www.ishares.com/us/products/239456/ishares-7-10-year-treasury-bond-etf
+us_intermediate_treasury,IEI,2007-01-05,3-7 year U.S. Treasury,https://www.ishares.com/us/products/239455/ishares-3-7-year-treasury-bond-etf
+us_intermediate_treasury,VGIT,2009-11-19,Intermediate U.S. Treasury,https://investor.vanguard.com/investment-products/etfs/profile/vgit
+us_long_treasury,TLT,2002-07-22,20+ year U.S. Treasury,https://www.ishares.com/us/products/239454/ishares-20-year-treasury-bond-etf
+us_long_treasury,VGLT,2009-11-19,Long-term U.S. Treasury,https://investor.vanguard.com/investment-products/etfs/profile/vglt
+us_long_treasury,TLO,2007-05-29,10+ year U.S. Treasury,https://www.ssga.com/us/en/intermediary/etfs/spdr-portfolio-long-term-treasury-etf-tlo
+us_ig_corporate,LQD,2002-07-22,Broad U.S. investment-grade corporate bonds,https://www.ishares.com/us/products/239566/ishares-iboxx-investment-grade-corporate-bond-etf
+us_listed_real_estate,IYR,2000-06-12,U.S. real estate equities,https://www.ishares.com/us/products/239520/ishares-us-real-estate-etf
+us_listed_real_estate,VNQ,2004-09-23,U.S. real estate equities,https://investor.vanguard.com/investment-products/etfs/profile/vnq
+us_listed_real_estate,RWR,2001-04-23,Dow Jones U.S. Select REIT Index,https://www.ssga.com/us/en/intermediary/etfs/spdr-dow-jones-reit-etf-rwr
+us_listed_real_estate,FRI,2007-05-08,U.S. listed real estate,https://www.ftportfolios.com/Retail/Etf/EtfSummary.aspx?Ticker=FRI
+gold,GLD,2004-11-18,Physical gold bullion,https://www.ssga.com/us/en/intermediary/etfs/spdr-gold-shares-gld
+gold,IAU,2005-01-21,Physical gold bullion,https://www.ishares.com/us/products/239561/ishares-gold-trust-fund
+gold,SGOL,2009-09-09,Physical gold bullion,https://www.abrdn.com/en-us/etf/sgOL
+broad_commodities,DBC,2006-02-03,Diversified commodity futures,https://www.invesco.com/us/financial-products/etfs/product-detail?audienceType=Investor&ticker=DBC
+broad_commodities,GSG,2006-07-10,Diversified commodity futures,https://www.ishares.com/us/products/239757/ishares-sp-gsci-commodity-indexed-trust-fund
+broad_commodities,DJP,2006-06-06,Diversified commodity futures ETN,https://www.ipathetn.com/US/16/en/instruments.app?instrumentId=341408
+broad_commodities,GCC,2008-02-08,Diversified commodity futures,https://www.wisdomtree.com/investments/etfs/commodity/gcc

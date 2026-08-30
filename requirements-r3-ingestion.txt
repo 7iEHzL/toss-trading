@@ -1,0 +1,5 @@
+# R3 data ingestion only. Requires Python 3.11+; do not install into the
+# Python 3.9 broker/research runtime.
+pandas>=2.0,<3
+yfinance==1.7.0
+pitindex==0.2.1

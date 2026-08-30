@@ -21,6 +21,9 @@ __pycache__/
 *.log
 logs/
 
+# Downloaded research datasets (local snapshots only)
+data/snapshots/
+
 # OS
 .DS_Store
 Thumbs.db
