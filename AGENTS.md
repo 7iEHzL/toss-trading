@@ -5,6 +5,10 @@
 - This is a Python-based Toss Securities Open API quantitative trading and research project.
 - The project is currently moving from an exploratory prototype toward a reliable research backtester.
 - Paper trading and, eventually, live trading are long-term goals. Research and backtest reliability take priority now.
+- The primary research objective is systematic discovery, falsification, and validation of quantitative alpha signals under the Alpha Lab protocol, not unconstrained Sharpe maximization.
+- Publication research remains a secondary filter: repeated, economically interesting Alpha Lab findings may become Paper Observations and enter PQD, but an alpha result is not automatically a paper.
+- Before evaluating a new alpha, assign an immutable ID and freeze an Alpha Card with its hypothesis, formula, information timing, data, metrics, costs, expected sign, and failure criteria.
+- Preserve every tested hypothesis and failed result. Do not silently delete IDs, hide parameter variants, or relabel optimization output as discovery evidence.
 
 ## Safety — Critical
 
@@ -56,6 +60,15 @@
 - Unit tests must not depend on the real broker API.
 - Use mock or fake broker responses where practical.
 - Keep integration tests that communicate with the real broker clearly separated from ordinary unit tests, and do not run them without explicit user permission.
+
+## Alpha Research
+
+- Separate signal discovery from signal combination and portfolio construction.
+- Use cross-sectional IC, rank IC, coverage, quantile monotonicity, decay, turnover, concentration, and cost robustness as appropriate; portfolio CAGR alone is not alpha evidence.
+- Record every tested hypothesis and variant in `research/alpha_lab/ALPHA_CATALOG.csv` with monotonic IDs and lineage.
+- Treat parameter search as a separately approved optimization phase with a frozen search budget and multiple-testing controls.
+- Label 2007–2022 as previously observed research history and keep Final OOS 2023–2025 sealed.
+- Do not represent Yahoo/current-member histories as survivorship-free or point-in-time universes.
 
 ## Git
 

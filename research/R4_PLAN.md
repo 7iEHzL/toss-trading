@@ -1,14 +1,18 @@
-# R4 — Independent Fixed-ETF Universe Replication Plan
+# R4A — Independent Asset-class ETF Replication Plan
 
 ## Status
 
-`R4-000 COMPLETE — UNIVERSE FROZEN; R4-001 PERFORMANCE NOT RUN`
+`R4A COMPLETE — R4A-001 REJECTED; FINAL OOS SEALED`
 
 ## Research Question
 
 Frozen R1-002 momentum/risk-off rule이 개별주식 PIT universe가 아닌, 결과 조회 전에 경제적 범주와 선택 규칙이 고정된 독립 ETF/asset universe에서도 견고성을 보이는가?
 
 R4는 R3의 대체 성공이 아니다. R3는 S&P 500 stock-level PIT replication 데이터 품질 실패로 종료됐으며, R4는 asset-level rotation robustness라는 다른 질문이다.
+
+`R4-000`과 `R4-001`의 기존 기록은 각각 `R4A-000`, `R4A-001`의
+canonical predecessor 이름으로 보존한다. 이는 protocol 변경이 아니라 9개
+asset-class 연구와 향후 broad-ETF 연구를 구분하기 위한 명칭 분리다.
 
 ## Category-first Universe Protocol
 
@@ -86,12 +90,14 @@ that file; R4-000 does not claim a complete census of every ETF that existed in 
 - Missing data and next-open availability must pass a separate snapshot audit before performance
 - Final OOS 2023–2025 remains sealed
 
-## Authorization Gate
+## Historical R4A-000 Authorization Gate
 
 R4-000 is authorized only for eligibility verification, 2013 liquidity measurement,
 2013-01-01 through 2014-06-30 adjusted-OHLCV quality audit, deterministic representative
 selection, and immutable snapshot creation. Strategy signals, portfolio returns,
 benchmarks and any R4-001 performance output are prohibited until a separate decision.
+That separate authorization was recorded in D-022; R4A-001 is now completed under the
+pre-registered rule below.
 
 ## R4-000 Decision Rule
 
@@ -114,5 +120,32 @@ The pre-registered audit passed for all nine categories. The immutable selection
 `SPY, EFA, EEM, IEF, TLT, LQD, IYR, GLD, DBC`
 
 Detailed eligibility, liquidity, coverage and failure evidence is recorded in
-`research/results/R4-000-fixed-etf-universe-audit.md`. R4-001 remains unexecuted and
-requires a separate authorization decision.
+`research/results/R4-000-fixed-etf-universe-audit.md`.
+
+## R4A-001 Pre-registered Decision Rule
+
+Primary 판단은 10bps에서 수행하고 0/5/20bps는 방향성 robustness로만 사용한다.
+성과를 보기 전에 다음 기준을 고정한다.
+
+- `ACCEPT`: 다음을 모두 충족한다.
+  1. Sharpe와 Calmar가 SPY 및 frozen-universe equal-weight benchmark보다 모두 높다.
+  2. 누적수익률이 frozen-universe equal-weight benchmark보다 높다.
+  3. 최대 단일 ETF absolute realized-P&L share가 50% 미만이다.
+  4. 최소 4개 ETF에서 청산 거래가 발생하고, equity 이외 asset에서 양의 realized P&L이 존재한다.
+  5. 2015–2016, 2017–2018, 2019–2020, 2021–2022 네 구간 중 최소 3개에서
+     전략 수익률이 양수이며, 0/5/10/20bps의 결론 방향이 충돌하지 않는다.
+- `REJECT`: 10bps에서 equal-weight 누적수익률을 넘지 못하면서 Sharpe와 Calmar도
+  두 benchmark 모두를 넘지 못하거나, 최대 단일 ETF concentration이 70% 이상이거나,
+  양의 2년 구간이 하나 이하인 경우다.
+- 그 외는 `INCONCLUSIVE`다.
+
+이 기준은 R1-002의 CAGR 재현보다 종목·asset·기간 일반화와 concentration 감소를
+우선한다. 결과를 본 뒤 threshold를 변경하지 않는다. Final OOS는 계속 봉인한다.
+
+## R4A-001 Outcome
+
+`REJECT`. 10bps에서 frozen strategy는 두 benchmark보다 낮은 return, Sharpe와
+Calmar를 기록했다. 단일 ETF realized-P&L concentration은 26.62%로 완화되고
+8개 ETF에서 청산 거래가 발생했지만, 양의 2년 구간은 2/4였고 비용 증가에 따라
+equal-weight 대비 방향도 유지되지 않았다. 상세 결과는
+`research/results/R4A-001-asset-class-replication.md`에 기록한다.

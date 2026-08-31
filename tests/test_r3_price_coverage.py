@@ -2,7 +2,10 @@ import unittest
 
 import pandas as pd
 
-from data.r3_validator import classify_audit, constituent_date_coverage, coverage_report
+from data.r3_validator import (
+    classify_audit, constituent_date_coverage, coverage_report,
+    validate_price_frame_r3,
+)
 from data.sources.yahoo_price_source import YahooPriceSource
 
 
@@ -33,6 +36,17 @@ class FakeBatchYahoo:
 
 
 class R3PriceCoverageTests(unittest.TestCase):
+
+    def test_validator_tolerates_only_machine_precision_ohlc_noise(self):
+        frame = pd.DataFrame({
+            "date": pd.to_datetime(["2015-01-30"]),
+            "open": [10.0], "high": [11.0], "low": [9.0 + 4e-15],
+            "close": [9.0], "volume": [100.0],
+        })
+        validate_price_frame_r3(frame, "EEM")
+        frame.loc[0, "low"] = 9.001
+        with self.assertRaisesRegex(ValueError, "low is inconsistent"):
+            validate_price_frame_r3(frame, "EEM")
     def test_no_final_oos_download_is_dispatched(self):
         with self.assertRaisesRegex(ValueError, "Final OOS"):
             YahooPriceSource(FakeYahoo).download("AAA", end_exclusive="2023-01-02")

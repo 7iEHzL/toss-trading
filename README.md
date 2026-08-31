@@ -1,5 +1,10 @@
 # Toss Trading Quant Project
 
+> 현재 primary objective는 통제된 연구 절차로 quantitative alpha signal을 체계적으로
+> 발견·반증·검증하는 것입니다. Alpha Lab은 성과 최대화가 아니라 모든 가설과 실패를
+> 기록하는 discovery system이며, 반복적으로 나타나는 경제적 현상만 별도의 PQD 절차를
+> 통해 publication candidate로 검토합니다.
+
 Toss Securities Open API를 이용해 국내외 주식 데이터를 조회하고, 규칙 기반 전략과 멀티팩터 로테이션 전략을 연구하는 Python 프로젝트입니다. 장기적으로 paper trading과 live trading을 목표로 하지만, 현재 최우선 과제는 **재현 가능하고 편향을 통제한 연구용 백테스터**를 구축하는 것입니다.
 
 기존 [ReadMe.txt](ReadMe.txt)는 초기 개발 과정과 당시 실험 결과를 담은 historical development note로 유지합니다. 그 문서의 수익률은 현재 코드 품질을 보증하는 결과가 아닙니다.
@@ -7,6 +12,10 @@ Toss Securities Open API를 이용해 국내외 주식 데이터를 조회하고
 ## 현재 개발 단계
 
 현재 단계는 **exploratory prototype에서 reliable research backtester로 발전하는 과정**입니다.
+
+Research-ready backtester와 R1–R5/PQD/Q06 legacy evidence 위에
+[`research/alpha_lab/`](research/alpha_lab/) 설계가 추가되었습니다. Alpha Lab v1은 아직
+architecture/protocol 단계이며 A001–A010 성과는 실행되지 않았습니다.
 
 - API 인증, 시세·candle·계좌·잔고 조회 코드가 있습니다.
 - 시장가/지정가 주문 함수가 있으나 안전한 운영 계층은 아직 없습니다.
@@ -287,6 +296,23 @@ ENABLE_REAL_ORDER=false
 
 ### R1 — Baseline Strategy / Factor Research
 
+R1–R4 연구 cycle은 완료되었습니다. Frozen R1-002는 original four-stock development에서
+강한 성과를 보였지만 R2에서 TSLA·기간 의존성이 확인됐고, R4A의 독립 9개
+asset-class ETF replication에서는 benchmark에 미달해 active general strategy
+candidate로 승격하지 않았습니다. R3와 R4B는 무료 데이터 품질 gate에서 성과를
+계산하지 않고 종료했습니다. 종합 결론은
+[`research/R1_R4_EVIDENCE_SYNTHESIS.md`](research/R1_R4_EVIDENCE_SYNTHESIS.md)를
+참조하십시오. Final OOS 2023–2025는 계속 봉인합니다.
+
+R5에서는 독립적인 multi-asset trend/risk-allocation 규칙을 평가했습니다. 2007–2014와
+2015–2022 사이에 큰 성과 불안정성이 나타났고, 제한된 attribution은 방향성 payoff 약화와
+allocation 효과의 부호 반전을 주된 설명으로 지목했습니다. 이 결과는 trading candidate를
+채택하거나 튜닝할 근거가 아니며, R5는 종료되었습니다. 현재 다음 단계는
+[`research/PUBLICATION_CANDIDATES.md`](research/PUBLICATION_CANDIDATES.md)의 연구 질문을
+선정하는 것입니다. 관련 문헌 검토는
+[`research/LITERATURE_REVIEW_TREND_INSTABILITY.md`](research/LITERATURE_REVIEW_TREND_INSTABILITY.md)에
+기록되어 있습니다.
+
 - 공통 데이터 구간과 benchmark를 먼저 고정하고 baseline 전략 선정
 - factor 가설, 계산 시점, 기대 방향과 평가 기준을 사전 정의
 - in-sample 성과 최대화 대신 out-of-sample/walk-forward 비교
@@ -295,6 +321,9 @@ ENABLE_REAL_ORDER=false
 
 ### P2 — Research Infrastructure
 
+- Alpha Card, immutable catalog와 parameter lineage 기반 Alpha Lab 최소 엔진
+- cross-sectional IC/rank IC, quantile spread, coverage, decay와 redundancy 평가
+- cohort별 multiple-testing count와 prospective shadow validation
 - 중복 버전을 하나의 engine + config 구조로 통합
 - data, signal, selection, allocation, execution, metrics 분리
 - 실험 parameter·data version·결과 metadata 저장
@@ -318,3 +347,21 @@ ENABLE_REAL_ORDER=false
 - 충분한 데이터 확보 후 ML 예측, uncertainty 및 model drift 관리
 
 P4는 P0~P2의 데이터·회계·검증 기반이 갖춰진 뒤 진행해야 합니다.
+
+## Alpha Lab v1
+
+Alpha Lab의 연구 단위는 `Axxx`이며 성과 조회 전에 Alpha Card를 동결합니다. 모든 ID와
+parameter variant는 [`ALPHA_CATALOG.csv`](research/alpha_lab/ALPHA_CATALOG.csv)에 보존합니다.
+핵심 절차, 데이터 한계와 최초 calibration batch는 다음 문서에 있습니다.
+
+- [Research protocol](research/alpha_lab/ALPHA_RESEARCH_PROTOCOL.md)
+- [WorldQuant public-model audit](research/alpha_lab/WORLDQUANT_RESEARCH_MODEL.md)
+- [Data feasibility](research/alpha_lab/DATA_FEASIBILITY.md)
+- [Universe options](research/alpha_lab/UNIVERSE_OPTIONS.md)
+- [Temporal protocol](research/alpha_lab/TEMPORAL_PROTOCOL.md)
+- [Initial A001–A010 batch](research/alpha_lab/INITIAL_ALPHA_BATCH.md)
+
+2007–2022는 기존 연구에서 이미 관찰된 contaminated history입니다. 2023–2025 Final OOS는
+계속 봉인하며 Alpha Lab에 재사용하지 않습니다. 무료 historical equity data는 survivorship-free로
+간주하지 않고, 향후 동결한 broad universe를 prospectively 추적하는 shadow period를 clean
+validation의 출발점으로 삼습니다.

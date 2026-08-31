@@ -45,6 +45,24 @@ def run_r1_risk_off_development(snapshot, exclude_tsla=False,
     )
 
 
+def run_r4a_asset_class_development(snapshot, universe, initial_cash=100000.0):
+    """Run frozen R1-002 on the separately frozen R4A asset-class universe."""
+    results = _run_r1_development(
+        snapshot, tuple(universe), initial_cash,
+        experiment_id="R4A-001", absolute_momentum_lookback=126,
+        diagnostic="FROZEN_ASSET_CLASS_UNIVERSE", top_n=1,
+        relative_momentum_weights=(1.0, 1.0, 1.0),
+        frame_preparer=_r4a_development_frame,
+    )
+    warning = (
+        "R4A uses a pre-registered fixed ETF universe and is an asset-class "
+        "replication, not stock-level PIT or survivorship-free replication."
+    )
+    for result in results.values():
+        result["research_report"]["warnings"] = [warning]
+    return results
+
+
 def run_r1_top2_development(snapshot, initial_cash=100000.0):
     """Run pre-registered R1-003 in the development region only."""
     return _run_r1_development(
@@ -127,7 +145,7 @@ def _run_r1_development(snapshot, universe, initial_cash, experiment_id,
                         score_volatility_lookback=None,
                         breadth_momentum_lookback=None,
                         minimum_positive_breadth=None,
-                        market_regime_lookback=None):
+                        market_regime_lookback=None, frame_preparer=None):
     if snapshot.metadata.get("adjusted") is not True:
         raise ValueError("R1 requires adjusted price data")
 
@@ -136,8 +154,9 @@ def _run_r1_development(snapshot, universe, initial_cash, experiment_id,
     if missing:
         raise ValueError(f"snapshot missing R1 symbols: {', '.join(sorted(missing))}")
 
-    data = {symbol: _development_frame(snapshot.prices[symbol]) for symbol in universe}
-    spy = _close_series(_development_frame(snapshot.prices[PRIMARY_BENCHMARK]))
+    prepare = frame_preparer or _development_frame
+    data = {symbol: prepare(snapshot.prices[symbol]) for symbol in universe}
+    spy = _close_series(prepare(snapshot.prices[PRIMARY_BENCHMARK]))
     equal_weight = _equal_weight_benchmark(data)
 
     results = {}
@@ -242,6 +261,22 @@ def _development_frame(frame):
     if result.empty:
         raise ValueError("snapshot has no R1 development observations")
     return result
+
+
+def _r4a_development_frame(frame):
+    """Keep exactly 126 pre-2015 rows as warm-up for the R4A evaluation."""
+    required = {"date", "open", "close"}
+    missing = required.difference(frame.columns)
+    if missing:
+        raise ValueError(f"R4A data missing columns: {', '.join(sorted(missing))}")
+    result = frame.copy()
+    result["date"] = pd.to_datetime(result["date"])
+    result = result[result["date"] <= DEVELOPMENT_END].sort_values("date")
+    warmup = result[result["date"] < DEVELOPMENT_START].tail(126)
+    evaluation = result[result["date"] >= DEVELOPMENT_START]
+    if len(warmup) < 126 or evaluation.empty:
+        raise ValueError("R4A requires 126 pre-development warm-up rows")
+    return pd.concat([warmup, evaluation], ignore_index=True)
 
 
 def _close_series(frame):

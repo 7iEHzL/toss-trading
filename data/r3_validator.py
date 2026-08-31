@@ -44,9 +44,10 @@ def validate_price_frame_r3(frame, ticker):
         raise ValueError(f"{ticker} OHLC must be finite")
     if (numeric <= 0).any().any():
         raise ValueError(f"{ticker} OHLC must be positive")
-    if (numeric["high"] < numeric[["open", "low", "close"]].max(axis=1)).any():
+    tolerance = 1e-10
+    if (numeric["high"] + tolerance < numeric[["open", "low", "close"]].max(axis=1)).any():
         raise ValueError(f"{ticker} high is inconsistent")
-    if (numeric["low"] > numeric[["open", "high", "close"]].min(axis=1)).any():
+    if (numeric["low"] - tolerance > numeric[["open", "high", "close"]].min(axis=1)).any():
         raise ValueError(f"{ticker} low is inconsistent")
 
 

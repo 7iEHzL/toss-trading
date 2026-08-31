@@ -169,3 +169,137 @@
 - Limitation: the pre-registered issuer-family roster is a closed practical roster, not a complete historical census of every U.S.-listed ETF.
 - R4-001: eligible for a separate authorization decision, but not yet authorized or executed.
 - Seal: frozen R1-002 unchanged; Final OOS 2023–2025 SEALED.
+
+## D-022 — Split R4 into Asset-class and Broad-ETF Replications
+
+- Decision: preserve the completed nine-ETF R4-000 as R4A-000 and evaluate it as the primary asset-class replication. Design a separate R4B broad-ETF cross-sectional study.
+- Rationale: R4A directly tests TSLA/regime dependence across distinct macro assets, while R4B tests breadth across many ETF exposures; neither substitutes for the other.
+- R4A-001: frozen R1-002 performance replication authorized under the pre-registered decision rule in `R4_PLAN.md`.
+- R4B-000: protocol design registered, but data feasibility and performance are not authorized by this decision. Historical ETF master and liquidated-fund handling are mandatory.
+- Discipline: R4A results cannot alter R4B taxonomy/gates; R4B cannot retroactively alter the frozen R4A universe.
+- Seal: Final OOS 2023–2025 remains SEALED.
+
+## D-023 — R4A-001 Asset-class Replication Outcome
+
+- Decision: `REJECT` under the pre-registered generalization rule.
+- 10bps evidence: total return 11.68%, CAGR 1.39%, Sharpe 0.167, Calmar 0.045, MDD -31.05%, turnover 217.91x. SPY returned 115.50%; equal-weight returned 33.37%.
+- Generalization evidence: maximum single-ETF absolute realized-P&L share fell to 26.62%, eight ETFs had realized exits, and non-equity assets contributed positive P&L.
+- Failure evidence: return and risk-adjusted metrics lagged both benchmarks; only two of four 2-year blocks were positive; cost direction was not robust and 20bps return was negative.
+- Interpretation: diversification across macro assets reduced name concentration but did not reproduce the R1-002 risk-adjusted edge.
+- Discipline: no parameter, threshold or universe change; the earlier pre-warm-up run is discarded as a timing-boundary defect and is not a research result.
+- Seal: R1-002 unchanged; Final OOS 2023–2025 SEALED.
+
+## D-024 — R4B-000 Broad-ETF Data Feasibility
+
+- Decision: `CONDITIONAL — DATA EXISTS, ACCESS NOT VERIFIED`; R4B-001 not authorized.
+- Credible route: CRSP survivor-bias-free fund data exposes ETF/ETN flags, inactive funds, historical headers and liquidation/merger metadata, but requires licensed access not held by this project.
+- Insufficient shortcut: Nasdaq's public directory is current-day; historical Daily List events do not alone provide a complete exposure-classified ETF master, adjusted prices and liquidation proceeds.
+- Rejected approach: current surviving ETF screen plus Yahoo prices, silent removal of closed funds, or post-result exposure deduplication.
+- Next high-impact decision: obtain and validate licensed historical ETF data, or close R4B and move to a different pre-registered question.
+- Seal: no R4B performance; Final OOS 2023–2025 SEALED.
+
+## D-025 — Free-data-only R4B Closure
+
+- User constraint: use free data only.
+- Decision: `R4B CLOSED — BLOCKED BY FREE-DATA COVERAGE`; R4B-001 permanently not authorized under the free-data protocol.
+- SEC evidence: EDGAR archives and submissions metadata are free, but do not provide one point-in-time 2014 ETF master with exchange ticker effective history, exposure families, adjusted OHLC and terminal proceeds. Structured N-CEN/N-PORT coverage begins too late for the 2014 freeze.
+- Nasdaq evidence: historical Daily List contains listing/delisting/symbol events but is a paid subscription product, violating the free-only constraint.
+- Rejected reconstruction: current ETF lists plus Yahoo, manual issuer-notice stitching, silent exclusion of closed funds, or an unmeasurable-completeness EDGAR scrape.
+- Reopen condition: a new licensed-data decision and row-level validation. No quality threshold or frozen strategy parameter is changed.
+- Seal: R4B performance 0 runs; Final OOS 2023–2025 SEALED.
+
+## D-026 — R1–R4 Evidence Synthesis and Candidate Disposition
+
+- Decision: current evidence favors universe/regime dependence over a broadly generalizable R1-002 momentum/risk-off edge.
+- Evidence chain: original four-stock development success; R2 TSLA/period/capital-scaling dependency; R4A benchmark underperformance under an independent nine-asset universe; R3/R4B performance withheld at failed data gates.
+- Candidate disposition: preserve R1-002 unchanged as a historical development candidate and research case study, but do not promote it in the active candidate pipeline or tune adjacent parameters.
+- Final OOS: do not open 2023–2025 for the weakened candidate. Preserve it for a future, stronger pre-registered research question.
+- Project interpretation: strategy adoption failed, but the research system succeeded by falsifying generalization and refusing biased data shortcuts.
+- Next stage: R5-000 compares new strategy families and data feasibility without running performance; R5 is not an R1-002 optimization stage.
+
+## D-027 — R5-000 New Strategy Design Recommendation
+
+- Status: design complete; high-impact protocol decision pending second opinion.
+- Recommended family: long-or-cash multi-asset independent trend with unlevered risk-based allocation.
+- Rationale: removes cross-sectional ranking and winner-take-all exposure, permits explicit trend-versus-risk-allocation ablation, fits the pre-frozen nine-ETF economic universe and is feasible with free OHLC data.
+- Alternatives: cross-sectional momentum is deprioritized because it recreates R1 failure modes; pure inverse-volatility remains a required structural baseline rather than the primary alpha hypothesis.
+- Proposed period: 2006 warm-up and 2007–2014 development, subject to a data-only coverage gate. The repeatedly observed 2015–2022 period cannot be called clean OOS.
+- Governance: exact canonical parameters and quantitative failure thresholds remain unfixed pending second opinion; no development performance may be used to select them.
+- Authorization: R5-001 `NOT AUTHORIZED` until the user approves the primary family, universe, period, parameter-source protocol and failure criteria.
+- Seal: Final OOS 2023–2025 remains SEALED.
+
+## D-028 — R5 Option A Family Approval
+
+- User decision: Option A approved.
+- Approved family: long-or-cash multi-asset independent trend with unlevered risk-based allocation.
+- Approved universe/period direction: frozen nine-ETF universe; proposed 2006 warm-up and 2007–2014 development, subject to a data-only gate.
+- Canonical proposal: 12-month adjusted-return sign, monthly close signal/next-open execution, lagged daily EWMA volatility with 60-day center of mass, inverse-volatility weights normalized to 100% gross, no shorting/leverage/portfolio volatility target.
+- Remaining high-impact gate: the exact ETF adaptation and quantitative ACCEPT/REJECT thresholds added to `R5_PLAN.md` require confirmation before performance.
+- Authorization: R5-001 remains `NOT AUTHORIZED`; no performance was viewed.
+- Seal: Final OOS 2023–2025 remains SEALED.
+
+## D-029 — R5 Exact Protocol Approval and Warm-up Correction
+
+- User decision: proceed with the proposed exact protocol and data-only audit.
+- Frozen proposal: 12-month adjusted-return sign; monthly next-open execution; EWMA volatility decay 60/61; unlevered inverse-volatility allocation among positive-trend assets; otherwise cash.
+- Boundary correction: development starts 2007-03-01, not 2007-01-01. DBC's 2006-02-03 inception cannot support a complete 12-month signal in January 2007. This was corrected before performance or pre-2013 price inspection.
+- Data gate: request 2006-02-03 through 2015-01-01 exclusive; require all nine symbols, at least 95% common-SPY-calendar coverage, valid adjusted OHLC and zero rows from 2015 onward.
+- Authorization: data-only audit authorized. R5-001 performance remains conditional on gate passage.
+- Seal: Final OOS 2023–2025 remains SEALED.
+
+## D-030 — R5 Data-gate Validator Boundary Correction
+
+- Initial audit output: 9/9 symbols, minimum common-calendar coverage 99.9554%, latest row 2014-12-31, Final OOS flag false.
+- Defect: code additionally required DBC's first row on or before its issuer inception date 2006-02-03. Yahoo begins DBC observations on the next trading day, 2006-02-06.
+- Correction: require every asset to begin by 2006-03-01, which preserves a full 12-month warm-up before the 2007-03-01 evaluation start.
+- Non-change: the 95% coverage threshold, universe, signal, evaluation period and performance protocol were not relaxed or changed.
+- Timing: corrected before any R5 strategy performance.
+
+## D-031 — R5-001 Development Outcome
+
+- Decision: `ACCEPT — DEVELOPMENT EVIDENCE ONLY`; not a final candidate.
+- 10bps candidate: total return 72.29%, CAGR 7.19%, volatility 8.04%, MDD -12.66%, Sharpe 0.905, Sortino 1.254, Calmar 0.568, turnover 21.90x.
+- Structural baselines: inverse-volatility/no-trend Sharpe 0.742, Calmar 0.262, MDD -22.01%; equal-weight trend Sharpe 0.762, Calmar 0.408, MDD -18.79%.
+- Passive context: equal-weight buy-and-hold CAGR 4.64%; SPY CAGR 7.34%. Candidate did not beat SPY CAGR but materially improved its drawdown and risk-adjusted metrics.
+- Robustness: positive return and Sharpe advantage over inverse volatility persisted through 20bps.
+- Dependency: four of four 2-year blocks positive; maximum positive block contribution 27.33%; maximum asset absolute P&L contribution 19.22%.
+- Discipline: no parameter search, R1/R4 alteration or post-result threshold change.
+- Next: R5-002 bounded robustness only. Final OOS remains SEALED.
+
+## D-032 — R5-002 Contaminated Stress Outcome
+
+- Decision: `REJECT — STRONG PERIOD INSTABILITY`.
+- Status: 2015–2022 is researcher-contaminated and is not labelled clean OOS, but the unchanged-rule evidence is materially adverse.
+- 10bps candidate: total return -0.87%, CAGR -0.11%, Sharpe 0.037, Calmar -0.005, MDD -22.10%, turnover 30.16x.
+- Baselines: inverse-volatility/no-trend Sharpe 0.403 and Calmar 0.135; equal-weight trend Sharpe 0.131 and Calmar 0.039.
+- Stability: one of four 2-year blocks positive; 2019–2020 supplied 100% of positive block contribution. Return changed from +2.24% at 0bps to -0.87% at 10bps and -3.85% at 20bps.
+- Conflict: R5-001 passed all frozen 2007–2014 gates, while R5-002 failed strongly. Candidate is not promoted or retuned.
+- Stop: R5-003 and Final OOS remain unauthorized pending high-impact second opinion.
+
+## D-033 — Publication-oriented Objective and R5-003 Authorization
+
+- User decision: primary objective changes from maximizing strategy performance to producing academically meaningful finance questions and paper-level empirical evidence.
+- Authorization: exactly one bounded R5-003 descriptive failure attribution plus systematic literature review; no strategy rescue, tuning or new performance specification.
+- Required closure: end R5 after attribution and propose at most three publication questions.
+- Seal: Final OOS 2023–2025 remains SEALED.
+
+## D-034 — R5 Closure and Literature-gap Decision
+
+- R5-003 classification: `DIRECTIONAL PAYOFF DETERIORATION + ALLOCATION EFFECT REVERSAL`, with cost amplification.
+- Evidence: overall monthly signal hit rate 54.48% to 51.70%; positive-signal mean payoff 0.646% to 0.305%; negative-signal assets subsequently returned +0.235% to +0.576%. Candidate-minus-no-trend Sharpe changed +0.163 to -0.366.
+- Rejected simple explanations: later false-transition rate was lower, and cost drag was similar across periods; neither alone explains the reversal.
+- Literature decision: temporal instability, loser reversal and volatility-scaling effects are not novel by themselves.
+- R5 final interpretation: strong temporal/regime and component instability; no final trading candidate.
+- Provisional publication direction: component-level structural instability of directional signal versus risk allocation, requiring broader/longer data and formal identification.
+- Stop: no R5 rescue or tuning. Final OOS remains SEALED.
+
+## D-035 — Alpha Lab v1 Direction and Design
+
+- User direction: primary objective changes to systematic alpha discovery, falsification and validation; publication research remains a secondary filter for structured empirical observations.
+- Legacy: R1–R5, R3/R4 data-quality findings, PQD and Q06 `RED — KILL` remain unchanged historical evidence.
+- Research unit: monotonic `Axxx` ID plus frozen Alpha Card before performance; variants retain lineage and every failed test remains cataloged.
+- Architecture: cross-sectional IC/rank IC and quantile evidence precede portfolio construction; optimization is a separately approved phase with explicit search budget.
+- Data decision: do not reconstruct another hand-stitched free historical universe. Recommend a frozen current broad liquid-equity discovery roster plus prospective membership/delisting ledger; historical results retain survivorship warnings.
+- Temporal decision: 2007–2022 is contaminated prior research history; 2023–2025 Final OOS remains SEALED and excluded; clean evidence begins with a future prospective shadow cohort.
+- WorldQuant boundary: only current public official rules are treated as authoritative; unverified Fitness, decay, truncation and submission formulas remain `UNKNOWN`.
+- Authorization: Alpha Lab v1 is design-only. A001–A010 remain `PROPOSED`; performance, backtests and optimization are not run.

@@ -176,6 +176,102 @@
 - Conclusion: `ACCEPT` for universe/data-audit feasibility only. This is not a strategy-performance acceptance.
 - Next research question: should this immutable universe be authorized for R4-001 replication under the already frozen strategy/evaluation protocol?
 
+## R4A-001 — Frozen Asset-class ETF Replication (Pre-registered)
+
+- ID: `R4A-001` (existing R4-001 scope, renamed only to distinguish R4B)
+- Hypothesis: frozen R1-002 can preserve risk-adjusted benchmark value while reducing single-name and temporal concentration across nine independently selected macro asset ETFs.
+- Baseline: frozen R1-002 parameters; no alpha or parameter change.
+- Change: universe only, from ex-post AMD/TSLA/AMZN/AAPL to frozen SPY/EFA/EEM/IEF/TLT/LQD/IYR/GLD/DBC.
+- Experiment setup: 2015–2022 development, warm-up from 2014-07, next-open, 0/5/10/20bps, SPY and universe equal-weight benchmarks. Final OOS sealed.
+- Decision criteria: fixed in `R4_PLAN.md` before development prices or performance are inspected.
+- Results: snapshot 9/9 symbols, 2,142 common dates, 2014-07-01 through 2022-12-30, post-OOS rows 0. At 10bps total return 11.68%, CAGR 1.39%, Sharpe 0.167, Sortino 0.201, Calmar 0.045, MDD -31.05%, turnover 217.91x and 227 trades. SPY return 115.50%; equal-weight return 33.37%. Maximum ETF concentration 26.62% (EEM), 8 sold assets, non-equity positive P&L, positive 2-year blocks 2/4. 0bps return 40.13%, 20bps -10.99%.
+- Conclusion: `REJECT`. Concentration generalized favorably, but return/risk-adjusted benchmark performance and temporal/cost robustness failed the frozen criteria.
+- Next research question: can R4B-000 obtain a survivorship-aware, exposure-deduplicated historical ETF master without repeating R3's silent survivorship/data-quality failure?
+
+## R4B-000 — Broad ETF Data Feasibility (Design Only)
+
+- ID: `R4B-000`
+- Research question: can a survivorship-aware, exposure-deduplicated broad ETF universe be reconstructed as of 2014-06-30 with sufficient next-open and liquidation coverage?
+- Frozen strategy: R1-002 unchanged; performance prohibited.
+- Results: official-source review found CRSP survivor-bias-free fund data structurally suitable but subscription-only and unavailable to the project. Nasdaq's public symbol directory is current-day; its historical Daily List is a corporate-action supplement, not a complete exposure-classified ETF master with adjusted prices and liquidation proceeds.
+- Conclusion: `CONDITIONAL — DATA EXISTS, ACCESS NOT VERIFIED`; R4B-001 `NOT AUTHORIZED`.
+- Next research question: whether to obtain licensed CRSP-equivalent access for sample validation or close R4B without performance.
+
+## R4B-000F — Free-data-only Final Feasibility Audit
+
+- ID: `R4B-000F`
+- Decision constraint: free sources only; no licensed CRSP/Nasdaq product.
+- Research question: can official free sources jointly reconstruct the frozen 2014 broad ETF master with measurable completeness, stable identity, exposure deduplication, inactive funds, adjusted prices and terminal treatment?
+- Evidence: SEC EDGAR offers free filing archives/submissions metadata but no integrated 2014 ETF master/trading/terminal schema; structured N-CEN/N-PORT history begins after the freeze date. Nasdaq historical Daily List is subscription-only. Current directories and Yahoo cannot measure missing inactive funds.
+- Results: mandatory master, inactive-fund completeness, ticker-effective-history, exposure and terminal-price gates cannot all be verified under the free-only constraint.
+- Conclusion: `BLOCKED — FREE-DATA COVERAGE INSUFFICIENT`; R4B-001 `NOT AUTHORIZED`.
+- Stop rule: no more free-source stitching, survivor-only performance, threshold relaxation or manual mapping. Reopen only under a new licensed-data decision.
+
+## S1-001 — R1–R4 Evidence Synthesis
+
+- ID: `S1-001`
+- Research question: after dependency audits, independent replication and data-quality gates, what evidence remains for R1-002 and should it consume Final OOS or continue as an active candidate?
+- Evidence: R1 local development improvement; R2 TSLA/payoff/period/capital-scaling dependence; R4A 10bps CAGR 1.39%, Sharpe 0.167 and benchmark underperformance despite lower 26.62% concentration; R3/R4B data-blocked with no performance.
+- Results: evidence for a universal momentum/risk-off edge is materially weakened. The original development phenomenon remains documented but is not independently replicated.
+- Conclusion: `REJECT AS ACTIVE GENERAL STRATEGY CANDIDATE`; preserve frozen historical code/results and stop adjacent tuning.
+- Final OOS: remain SEALED; do not spend it on the weakened candidate.
+- Next research question: R5-000 should compare genuinely new strategy families, data requirements and falsification tests before any performance run.
+
+## R5-000 — New Strategy Research Design
+
+- ID: `R5-000`
+- Research question: which genuinely new strategy family best addresses the empirical and data failures found in R1–R4?
+- Candidates: independent time-series trend plus risk allocation; cross-sectional momentum; pure multi-asset risk allocation.
+- Setup: design and local metadata feasibility only. No price download, signal, return, benchmark or performance calculation.
+- Result: recommend long-or-cash independent trend with unlevered risk-based allocation. Pure inverse volatility is retained as a structural baseline; cross-sectional momentum is deprioritized because it repeats ranking and concentration risks.
+- Proposed data protocol: frozen SPY/EFA/EEM/IEF/TLT/LQD/IYR/GLD/DBC universe; 2006 warm-up; 2007–2014 development subject to a new data-only gate. 2015–2022 is contaminated research history, not clean validation.
+- Conclusion: `DESIGN COMPLETE — SECOND OPINION REQUIRED`.
+- Authorization: R5-001 not authorized before approval of family, period, universe, canonical parameter sources and quantitative decision thresholds.
+- Final OOS: 2023–2025 remains SEALED.
+
+### Option A approval
+
+- User approved the recommended Option A family.
+- A single canonical implementation proposal was registered before performance: 12-month own-return sign, monthly next-open execution and 60-day-center-of-mass EWMA inverse-volatility allocation, long/cash and unlevered.
+- Quantitative risk-adjusted, benchmark, period/name concentration and 20bps cost gates were added before any R5 result.
+- R5-001 remains not authorized until exact-protocol confirmation and the 2006–2014 data-only gate pass.
+
+## R5-001 — Independent Trend with Risk-based Allocation
+
+- ID: `R5-001`
+- Hypothesis: independent 12-month trend plus unlevered inverse-volatility allocation improves risk-adjusted performance and concentration relative to pure risk allocation and equal-weight trend.
+- Baseline: inverse-volatility/no-trend and equal-weight independent trend; passive SPY and universe equal-weight context.
+- Setup: frozen nine ETFs, 2007-03-01–2014-12-31, month-end close/next-open, EWMA decay 60/61, 0/5/10/20bps, no leverage or shorting. Final OOS sealed.
+- Data gate: 9/9 symbols, 99.9554% minimum common-calendar coverage, latest row 2014-12-31, manifest verified.
+- Results: at 10bps total return 72.29%, CAGR 7.19%, volatility 8.04%, MDD -12.66%, Sharpe 0.905, Sortino 1.254, Calmar 0.568 and turnover 21.90x. Inverse-vol/no-trend Sharpe 0.742 and Calmar 0.262; equal-weight trend Sharpe 0.762 and Calmar 0.408. SPY CAGR was slightly higher at 7.34%.
+- Dependency: 4/4 positive two-year blocks; maximum block contribution 27.33%; maximum asset contribution 19.22%; 20bps result remained positive.
+- Conclusion: `ACCEPT — DEVELOPMENT EVIDENCE ONLY`; all frozen checks passed, but this is not final candidate selection.
+- Next: bounded R5-002 robustness without adjacent parameter search. Final OOS remains SEALED.
+
+## R5-002 — Frozen-rule Contaminated Period Stress
+
+- ID: `R5-002`
+- Question: does the unchanged R5-001 rule preserve its direction in the already-observed 2015–2022 period without tuning?
+- Classification: `RESEARCHER_CONTAMINATED_STRESS_DIAGNOSTIC`; not clean OOS.
+- Setup: same universe, signals, weights, timing and 0/5/10/20bps; no parameter change. Final OOS sealed.
+- Results: at 10bps total return -0.87%, CAGR -0.11%, MDD -22.10%, Sharpe 0.037, Calmar -0.005 and turnover 30.16x. Inverse-vol/no-trend Sharpe was 0.403; equal-weight trend Sharpe 0.131. Only 1/4 two-year blocks was positive.
+- Cost: total return +2.24%/0.70%/-0.87%/-3.85% at 0/5/10/20bps.
+- Conclusion: `REJECT — STRONG PERIOD INSTABILITY`.
+- Decision boundary: conflicts with R5-001 development ACCEPT. Stop R5-003, tuning and candidate promotion; request second opinion. Final OOS remains SEALED.
+
+## R5-003 — Bounded Failure Attribution and Literature Review
+
+- ID: `R5-003`
+- Question: why did the unchanged trend plus risk-allocation rule vary so strongly across the two historical periods?
+- Scope: descriptive decomposition only; signal, allocation, turnover, asset, period and cost. No strategy or parameter change.
+- Signal evidence: positive-signal mean payoff fell 0.646% to 0.305%; negative-signal assets subsequently rose 0.235% versus 0.576%; overall hit rate fell 54.48% to 51.70%.
+- Allocation evidence: candidate-minus-no-trend Sharpe changed from +0.163 to -0.366; candidate-minus-equal-trend Sharpe from +0.143 to -0.094.
+- Whipsaw/cost: transitions rose 78 to 90 but false-transition rate fell 53.85% to 47.78%; 0-to-10bps drag was 3.83%p versus 3.11%p. Neither is the primary explanation.
+- Asset/period: early contributions were positive across groups; later equity and real assets were negative. Early success was not concentrated in the NBER GFC recession window; the COVID recession window was negative.
+- Conclusion: `DIRECTIONAL PAYOFF DETERIORATION + ALLOCATION EFFECT REVERSAL`; moderate descriptive confidence, low causal confidence.
+- Literature: broad instability, reversal and scaling effects are substantially known. The potential gap is a unified component-level structural-break design under matched exposure.
+- R5 closure: no final strategy; no tuning; Final OOS remains SEALED.
+
 ## Experiment Template
 
 - ID:
@@ -186,3 +282,15 @@
 - Results:
 - Conclusion: `ACCEPT` / `REJECT` / `INCONCLUSIVE`
 - Next research question:
+
+## ALPHA-LAB-v1 — Research Infrastructure Design
+
+- ID: `ALPHA-LAB-v1`
+- Objective: establish a governed discovery system capable of testing many cross-sectional alpha hypotheses without silent data mining.
+- Change: documentation and research metadata architecture only; no production alpha engine or performance test.
+- Outputs: WorldQuant public-model audit, alpha protocol/catalog/families, data and universe feasibility, temporal governance, metrics/inference, multiple-testing policy, paper bridge and proposed A001–A010 calibration batch.
+- Data conclusion: free current-member histories are not survivorship-free; recommend survivorship-limited historical discovery plus a prospectively maintained broad-universe shadow registry.
+- Temporal conclusion: 2007–2022 contaminated; 2023–2025 Final OOS SEALED; future prospective cohorts provide clean validation.
+- Status: `DESIGN COMPLETE — FREEZE DECISION PENDING`.
+- Results: no alpha performance, backtest, parameter optimization or data download.
+- Next decision: freeze Alpha Lab v1 architecture and implement the minimum data/ledger/evaluation engine, modify the protocol, or stop.

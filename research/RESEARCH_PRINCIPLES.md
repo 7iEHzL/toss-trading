@@ -4,6 +4,9 @@
 
 ## Research Objective
 
+- Primary objective는 Alpha Lab을 통한 quantitative alpha signal의 체계적 발견, 반증과 검증이다.
+- 최고 backtest Sharpe를 사후 탐색하는 것이 아니라 모든 hypothesis, parameter lineage, 실패와 data block을 보존하는 discovery process가 우선이다.
+- Publication research는 secondary objective다. 반복적으로 확인된 경제적으로 흥미로운 현상만 Paper Observation으로 보존하고 기존 PQD가 novelty와 identification을 독립적으로 공격한다.
 - 현재 목표는 live performance를 주장하는 것이 아니라 재현 가능하고 편향을 명시한 research process를 구축하는 것이다.
 - P1 research-ready backtester를 기준 도구로 사용하며, 전략 수익률 극대화보다 검증 가능한 가설과 올바른 비교를 우선한다.
 - R1의 고정 primary baseline은 Cross-sectional Momentum Rotation이다. R1-002는 현재 development 단계 candidate이며 최종 채택 전략이 아니다.
@@ -16,6 +19,10 @@
 - ACCEPT는 단순 total return 증가만으로 결정하지 않는다. CAGR, volatility, MDD, Sharpe, Sortino, Calmar, turnover, 거래 수, benchmark excess return과 필요한 concentration 진단을 함께 본다.
 - neighboring parameter를 결과 확인 후 연속 탐색하지 않는다. Parameter search가 필요하면 범위와 평가 방법을 먼저 고정한다.
 - Development 결과를 본 뒤 primary baseline을 소급 변경하지 않는다.
+- Publication candidate는 novelty, identification, statistical inference, economic significance, alternative explanations, robustness, reproducibility와 literature contribution으로 평가한다.
+- 새로운 전략 구현 전에 systematic literature review와 research-gap analysis를 우선한다.
+- Alpha Lab에서는 성과 조회 전에 immutable `Axxx` ID와 Alpha Card를 생성하고 `ALPHA_CATALOG.csv`에 등록한다.
+- Signal discovery, signal combination, portfolio construction과 parameter optimization을 별도 단계로 취급한다.
 
 ## Fixed R1 Protocol
 
